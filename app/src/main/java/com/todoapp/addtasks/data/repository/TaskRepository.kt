@@ -1,6 +1,6 @@
 package com.todoapp.addtasks.data.repository
 
-import com.todoapp.addtasks.data.TaskDao
+import com.todoapp.addtasks.data.local.TaskDao
 import com.todoapp.addtasks.data.entities.TaskEntity
 import com.todoapp.addtasks.ui.model.TaskModel
 import kotlinx.coroutines.flow.Flow

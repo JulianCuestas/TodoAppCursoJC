@@ -2,8 +2,8 @@ package com.todoapp.addtasks.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.todoapp.addtasks.data.TaskDao
-import com.todoapp.addtasks.data.TodoDatabase
+import com.todoapp.addtasks.data.local.TaskDao
+import com.todoapp.addtasks.data.local.TodoDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

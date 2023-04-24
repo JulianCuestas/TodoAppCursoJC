@@ -1,4 +1,4 @@
-package com.todoapp.addtasks.data
+package com.todoapp.addtasks.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
