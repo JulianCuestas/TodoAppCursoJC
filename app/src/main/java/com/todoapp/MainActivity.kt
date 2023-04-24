@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.todoapp.addtasks.domain.TasksViewModel
+import com.todoapp.addtasks.ui.TasksViewModel
 import com.todoapp.addtasks.ui.TasksScreen
 import com.todoapp.ui.theme.TodoAppTheme
 import dagger.hilt.android.AndroidEntryPoint

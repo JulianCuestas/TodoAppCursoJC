@@ -1,4 +1,4 @@
-package com.todoapp.addtasks.domain
+package com.todoapp.addtasks.ui
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
