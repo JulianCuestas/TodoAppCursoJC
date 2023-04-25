@@ -1,18 +1,39 @@
 package com.todoapp.addtasks.ui
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.todoapp.addtasks.domain.AddTaskUseCase
+import com.todoapp.addtasks.domain.DeleteTaskUseCase
+import com.todoapp.addtasks.domain.GetTasksUseCase
+import com.todoapp.addtasks.domain.UpdateTaskUseCase
+import com.todoapp.addtasks.ui.TasksUiState.Success
+import com.todoapp.addtasks.ui.TasksUiState.Error
 import com.todoapp.addtasks.ui.model.TaskModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TasksViewModel @Inject constructor(): ViewModel() {
+@HiltViewModel
+class TasksViewModel @Inject constructor(
+    private val addTaskUseCase: AddTaskUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
+    getTasksUseCase: GetTasksUseCase
+): ViewModel() {
+
+    val uiState: StateFlow<TasksUiState> = getTasksUseCase().map ( ::Success )
+        .catch { Error(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TasksUiState.Loading )
 
     private val _showDialog = MutableLiveData<Boolean>()
     val showDialog: LiveData<Boolean> = _showDialog
-    private val _tasksList = mutableStateListOf<TaskModel>()
-    val tasksList: List<TaskModel> = _tasksList
 
     fun onDialogClose() {
         _showDialog.value = false
@@ -20,7 +41,9 @@ class TasksViewModel @Inject constructor(): ViewModel() {
 
     fun onTaskCreated(task: String) {
         this.onDialogClose()
-        this._tasksList.add(TaskModel(task = task))
+        viewModelScope.launch {
+            addTaskUseCase(TaskModel(task = task))
+        }
     }
 
     fun onShowDialogClick() {
@@ -28,15 +51,15 @@ class TasksViewModel @Inject constructor(): ViewModel() {
     }
 
     fun onCheckBoxSelected(taskModel: TaskModel) {
-        val index = _tasksList.indexOf(taskModel)
-        _tasksList[index] = _tasksList[index].let {
-            it.copy(selected = !it.selected)
+        viewModelScope.launch {
+            updateTaskUseCase(taskModel.copy(selected = !taskModel.selected))
         }
     }
 
     fun onItemRemove(taskModel: TaskModel) {
-        val task = _tasksList.find { it.id == taskModel.id }
-        _tasksList.remove(task)
+       viewModelScope.launch {
+           deleteTaskUseCase(taskModel)
+       }
     }
 
 }
